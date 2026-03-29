@@ -1,0 +1,145 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "63f474cb-05d5-4f36-a047-9676f8280a88",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "25dc9ac2-5bbc-4b92-9c61-625b68126646",
+      "name": "Webhook",
+      "webhookId": "63f474cb-05d5-4f36-a047-9676f8280a88"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=oi {{ $json.body.description }}",
+        "options": {
+          "systemMessage": "Gerador de Animações de FUNDO DE PAGINA CSS\nCrie uma animação CSS de FUNDO DE SITE e responda somente com este formato, em json puro\n\n{\n\"html\": \"HTML gerado\",\n\"preview\": \"<div class=\"bg\"></div>\n<div class=\"bg bg2\"></div>\n<div class=\"bg bg3\"></div>\",\n\"css\": \"CSS puro\"\n}\n\nExemplo de fundo animado\n\n{\nhtml: \"<div class=\"bg\"></div>\n<div class=\"bg bg2\"></div>\n<div class=\"bg bg3\"></div>\",\n\ncss:\"html {\n  height:100%;\n}\n\nbody {\n  margin:0;\n}\n\n.bg {\n  animation:slide 3s ease-in-out infinite alternate;\n  background-image: linear-gradient(-60deg, #6c3 50%, #09f 50%);\n  bottom:0;\n  left:-50%;\n  opacity:.5;\n  position:fixed;\n  right:-50%;\n  top:0;\n  z-index:-1;\n}\n\n.bg2 {\n  animation-direction:alternate-reverse;\n  animation-duration:4s;\n}\n\n.bg3 {\n  animation-duration:5s;\n}\n\n.content {\n  background-color:rgba(255,255,255,.8);\n  border-radius:.25em;\n  box-shadow:0 0 .25em rgba(0,0,0,.25);\n  box-sizing:border-box;\n  left:50%;\n  padding:10vmin;\n  position:fixed;\n  text-align:center;\n  top:50%;\n  transform:translate(-50%, -50%);\n}\n\nh1 {\n  font-family:monospace;\n}\n\n@keyframes slide {\n  0% {\n    transform:translateX(-25%);\n  }\n  100% {\n    transform:translateX(25%);\n  }\n}\"\n}\n\nREGRAS:\nSem quebras de linha\nUse aspas simples dentro das strings\nAnimações coloridas e impressionantes\nCódigo simples com visual marcante\nse atente pra criar todas os elementos html que você definiu nas classes css e vice versa\nnão retorne nenhuma div ou estilo com loader, ou classe loader\nnão retorne nenhuma propriedade com overflow"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "f21ebae9-f85e-46a1-a779-7317ed2fe48f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        416,
+        192
+      ],
+      "id": "7746e5af-3ef8-498d-b2ec-7dd20f357408",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "3v7SLaWXg8xg1Krc",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        976,
+        0
+      ],
+      "id": "c79f3e71-82b4-44e0-a6f4-fe308d0a4a02",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const output = $input.first().json.output.replace(\"json\",\"\").replaceAll(\"`\",\"\")\n\nreturn {output}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        768,
+        0
+      ],
+      "id": "b4a637b4-0494-40a4-88b1-617e80645b83",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "daadba6f-2c47-4bd4-a7fa-2bad0d25cb89",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0f322acf5d3f735ab4ca1257ec97862ad61340e27e39c34559e5e008b28df2a1"
+  },
+  "id": "tMjq8iPSt9a3OUu8",
+  "tags": []
+}
